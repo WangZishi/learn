@@ -1,4 +1,4 @@
-import { malloc, Pointer } from './memory';
+import { malloc, Pointer, sizeof } from './memory';
 
 interface List<T> {
     get(index: number): T;
@@ -10,10 +10,15 @@ interface List<T> {
 
 class LinkedNode<T> {
     constructor(
-        private value: T,             // 32 bit
-        private next: Pointer = null,  //  8 bit
-    ) { }
+        public value: T,             // 32 bit
+        public next: Pointer = null,  //  8 bit
+    ) {
+        const pointer = malloc(sizeof(value) + 1);
+        mem[pointer] = value;
+    }
 }
+
+// function () { }
 
 //  p
 //  |              |<--------------------------<-|
@@ -23,7 +28,7 @@ class LinkedNode<T> {
 
 class LinkedList<T> implements List<T> {
     private byteLength = 4; // 实现 32 bit 数据存储
-
+    private head: LinkedNode<T> | null = null;
     constructor() { }
 
     private getValueFromMemory(pointer: number): T {
@@ -33,9 +38,21 @@ class LinkedList<T> implements List<T> {
     }
 
     private setValueToMemory(value: T): number {
-        const p = malloc(4);
-        // memory[p] = value;
-        new DataView(memory).setInt32()
+        // const p = malloc(4);
+        // // memory[p] = value;
+        // new DataView(memory).setInt32()
+    }
+
+    private getNext() {
+
+    }
+
+    private getLast(): Pointer {
+        if (this.head) {
+            this.head.
+        } else {
+            return null;
+        }
     }
 
     public get(index: number): T {
@@ -47,12 +64,11 @@ class LinkedList<T> implements List<T> {
     }
 
     public append(value: T): void {
-        const prevNode = this.getLastNodePointer() as number | null;
+        const prevNode = this.getLast();
         if (!prevNode) {
             const nextNode = new LinkedNode(value, null);
         } else {
             const nextNode = new LinkedNode(value, prevNode);
-
         }
         throw new Error("Method not implemented.");
     }

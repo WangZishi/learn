@@ -32,3 +32,4 @@ function free(pointer: number) {
 }
 
 export type Pointer = number | null;
+
