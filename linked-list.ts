@@ -1,3 +1,4 @@
+import { malloc, Pointer } from './memory';
 
 interface List<T> {
     get(index: number): T;
@@ -7,26 +8,10 @@ interface List<T> {
     delete(index: number): void;
 }
 
-const MEMORY_SIZE = 1024 * 64; // 64 KiB 内存
-const memory = new ArrayBuffer(MEMORY_SIZE); // 64 KiB 内存
-
-// suuuuuuuuuper silly memory allocate
-let used = 0;
-function malloc(byteLength: number): number {
-
-    if (used + byteLength > MEMORY_SIZE) {
-        throw Error('Do not have enough memory!');
-    }
-
-    const pointer = used;
-    used += byteLength;
-    return pointer;
-}
-
 class LinkedNode<T> {
     constructor(
         private value: T,             // 32 bit
-        private next: number | null,  //  8 bit
+        private next: Pointer = null,  //  8 bit
     ) { }
 }
 
@@ -40,8 +25,6 @@ class LinkedList<T> implements List<T> {
     private byteLength = 4; // 实现 32 bit 数据存储
 
     constructor() { }
-
-    // private 
 
     private getValueFromMemory(pointer: number): T {
         // return new DataView(
@@ -73,9 +56,11 @@ class LinkedList<T> implements List<T> {
         }
         throw new Error("Method not implemented.");
     }
+
     public insert(value: T, index: number): void {
         throw new Error("Method not implemented.");
     }
+
     public delete(index: number): void {
         throw new Error("Method not implemented.");
     }
