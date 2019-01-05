@@ -1,8 +1,7 @@
 
 const MEMORY_SIZE = 1024 * 64; // 64 KiB 内存
-const memory = new ArrayBuffer(MEMORY_SIZE);
+const _memory = new ArrayBuffer(MEMORY_SIZE);
 
-// suuuuuuuuuper silly memory allocate
 let used = 0;
 export function malloc(byteLength: number): number {
 
@@ -31,5 +30,32 @@ function free(pointer: number) {
     throw new Error("Function not implemented.");
 }
 
-export type Pointer = number | null;
+export const nullptr = -1;
+export type nullptr = -1;
+export type Pointer = number | nullptr;
 
+export const memory = new Proxy(new DataView(_memory), {
+    set: (mem, ptr, value) => {
+        ptr = parseFloat(ptr as string);
+        if (typeof ptr === 'number' && (ptr | 0) === ptr) {
+            mem.setInt32(ptr, value, true);
+            return true;
+        } else {
+            return false;
+        }
+    },
+    get: (mem, ptr) => {
+        ptr = parseFloat(ptr as string);
+        if (typeof ptr === 'number' && (ptr | 0) === ptr) {
+            return mem.getInt32(ptr, true);
+        }
+    }
+}) as Memory;
+
+interface Memory extends DataView {
+    [index: number]: number | null
+}
+
+export function inspect() {
+    console.log(new Int32Array(_memory));
+}
