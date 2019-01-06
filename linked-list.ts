@@ -1,4 +1,7 @@
-import { malloc, Pointer, sizeof, memory, inspect, nullptr } from './memory';
+import 'reflect-metadata';
+import { Int32, malloc, Memory, nullptr, Pointer, sizeof } from './memory';
+
+const memory = Memory.create(64);
 
 interface List<T> {
     get(index: number): T;
@@ -10,16 +13,20 @@ interface List<T> {
 
 class LinkedNode<T extends number> {
     constructor(
-        public value: T,
-        public next: Pointer = nullptr,
+        @Int32 public value: T,
+        @Pointer public next: Pointer = nullptr,
     ) {
-        const pointer = malloc(sizeof(value) + sizeof(next));
-        memory[pointer] = value;
-        memory[pointer + sizeof(value)] = next;
+        const ptr = malloc(sizeof(this));
     }
+
 }
 
-// function () { }
+const node = new LinkedNode(110, 5);
+
+memory[0] = node;
+
+// malloc(memory, 5);
+memory.inspect();
 
 //  p
 //  |              |<--------------------------<-|
@@ -27,31 +34,25 @@ class LinkedNode<T extends number> {
 //           |->------------------------>|
 //
 
-const node = new LinkedNode(1);
-console.log(inspect());
+// const node = new LinkedNode(1);
+// console.log(inspect());
 
 class LinkedList<T extends number> implements List<T> {
-    private byteLength = 4; // 实现 32 bit 数据存储
-    private head: LinkedNode<T> | null = null;
+    private head?: LinkedNode<T>;
     constructor() { }
 
-    // private getValueFromMemory(pointer: number): T {
-    //     // return new DataView(
-    //     //     this.mem.slice(pointer, pointer + this.byteLength),
-    //     // ).getInt32(pointer) as unknown as T;
+    // private * getNext() {
+    //     return null;
     // }
-
-    // private setValueToMemory(value: T): number {
-    //     // const p = malloc(4);
-    //     // // memory[p] = value;
-    //     // new DataView(memory).setInt32()
-    // }
-
-    private getNext() {
-
-    }
 
     private getLast(): Pointer {
+        let result = nullptr;
+        let current = this.head;
+        while (current && current.next !== nullptr) {
+            result = current.next;
+
+        }
+
         if (this.head) {
             this.head.next;
             return this.head.next;
